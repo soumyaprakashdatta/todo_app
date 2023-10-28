@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 
-void main() {
+import "./todo.dart";
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  const keyApplicationId = String.fromEnvironment('KeyApplicationId');
+  const keyClientKey = String.fromEnvironment('KeyClientKey');
+  const keyParseServerUrl = String.fromEnvironment('KeyParseServerUrl');
+
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, autoSendSessionId: true, debug: true);
+
+  final ParseResponse apiResponse =
+      await QueryBuilder<ParseObject>(ParseObject('todo')).query();
+  if (apiResponse.success && apiResponse.results != null) {
+    // Let's show the results
+    for (var o in apiResponse.results!) {
+      print((o as ParseObject).toString());
+    }
+  }
+
   runApp(const MyApp());
 }
 
@@ -10,7 +30,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Startup name generator", home: _RandomWords());
+    // return MaterialApp(title: "Startup name generator", home: _RandomWords());
+    return const MaterialApp(title: "Todo App", home: Todo());
   }
 }
 
