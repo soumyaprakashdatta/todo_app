@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
 void main() {
-  runApp(_MyApp());
+  runApp(const MyApp());
 }
 
-class _MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(title: "Startup name generator", home: _RandomWords());
@@ -23,9 +25,6 @@ class _RandomWordsState extends State<_RandomWords> {
 
   @override
   Widget build(BuildContext context) {
-    // final wordPair = WordPair.random();
-    // return Text(wordPair.asPascalCase);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Startup name generator'),
