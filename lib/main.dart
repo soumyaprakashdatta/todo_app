@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return MaterialApp(title: "Startup name generator", home: _RandomWords());
     return const MaterialApp(title: "Todo App", home: Todo());
   }
 }
