@@ -1,103 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
-import 'dart:convert';
+import 'dart:developer' as developer;
+
+import './todo_entry.dart';
+import './api.dart';
 
 class Todo extends StatelessWidget {
   const Todo({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Todo App", home: TodoListView());
+    return const MaterialApp(title: "Todo App", home: TodoListView());
   }
 }
 
 class TodoListView extends StatefulWidget {
+  const TodoListView({super.key});
+
   @override
   TodoListViewState createState() => TodoListViewState();
 }
 
 class TodoListViewState extends State<TodoListView> {
   Future<List<TodoEntry>> todos = fetchTodoEntries();
+  final todoController = TextEditingController();
 
+  void createEntry() async {
+    if (todoController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("empty title"), duration: Duration(seconds: 2)));
+      return;
+    }
+
+    await createTodoEntry(todoController.text, "abcd");
+
+    setState(() {
+      todoController.clear();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Today's tasks")),
-        body: Scaffold(
-            body: Center(
-                child: FutureBuilder<List<TodoEntry>>(
-                    future: todos,
-                    builder: (ctx, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        print("waiting for data");
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasData) {
-                        print("fetched data");
-                        print(snapshot.data);
-                        return ListView.builder(
-                            itemCount: snapshot.data?.length,
-                            padding: const EdgeInsets.all(16),
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(snapshot.data![index].title),
-                              );
-                            });
-                      } else {
-                        print("no data");
-                        print(snapshot);
-                        return Container();
-                      }
-                    }))));
-  }
-}
-
-Future<List<TodoEntry>> fetchTodoEntries() async {
-  final ParseResponse apiResponse = await QueryBuilder<ParseObject>(ParseObject('todo')).query();
-  if (apiResponse.success && apiResponse.results != null) {
-    // Let's show the results
-    for (var o in apiResponse.results!) {
-      print((o as ParseObject).toString());
-    }
-
-    final maps = jsonDecode(apiResponse.results.toString()).cast<Map<String, dynamic>>();
-    return List.generate(maps.length, (i) {
-      return TodoEntry.fromMap(maps[i]);
-    });
-  }
-  throw Exception("error while fetching data");
-}
-
-// {
-//     "className":"todo",
-//     "objectId":"anl1T8kCE2",
-//     "createdAt":"2023-10-28T08:02:22.183Z",
-//     "updatedAt":"2023-10-28T08:02:22.183Z",
-//     "title":"sample item",
-//     "description":"this is a sample todo item"
-// }
-class TodoEntry {
-  final String className;
-  final String objectId;
-  final String createdAt;
-  final String updatedAt;
-  final String title;
-  final String description;
-
-  TodoEntry(
-      {required this.className,
-      required this.objectId,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.title,
-      required this.description});
-
-  factory TodoEntry.fromMap(Map<String, dynamic> map) {
-    return TodoEntry(
-      className: map['className'],
-      objectId: map['objectId'],
-      createdAt: map['createdAt'],
-      updatedAt: map['updatedAt'],
-      title: map['title'],
-      description: map['description'],
-    );
+        body: Column(children: <Widget>[
+          Row(children: <Widget>[
+            Expanded(
+                child: TextField(
+              autocorrect: true,
+              textCapitalization: TextCapitalization.sentences,
+              controller: todoController,
+              decoration: const InputDecoration(
+                  labelText: "New Todo",
+                  labelStyle: TextStyle(color: Colors.blue)),
+            )),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                ),
+                onPressed: createEntry,
+                child: const Text("ADD")),
+          ]),
+          Expanded(
+              child: FutureBuilder<List<TodoEntry>>(
+                  future: todos,
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      developer.log("waiting for data");
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasData) {
+                      developer.log("fetched data");
+                      developer.log(snapshot.data.toString());
+                      return ListView.builder(
+                          itemCount: snapshot.data?.length,
+                          padding: const EdgeInsets.all(16),
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(snapshot.data![index].title),
+                            );
+                          });
+                    } else {
+                      developer.log("no data");
+                      developer.log(snapshot.toString());
+                      return Container();
+                    }
+                  }))
+        ]));
   }
 }

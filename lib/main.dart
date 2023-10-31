@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
-
+import 'dart:developer' as developer;
 import "./todo.dart";
 
 Future<void> main() async {
@@ -18,7 +18,7 @@ Future<void> main() async {
   if (apiResponse.success && apiResponse.results != null) {
     // Let's show the results
     for (var o in apiResponse.results!) {
-      print((o as ParseObject).toString());
+      developer.log((o as ParseObject).toString());
     }
   }
 
