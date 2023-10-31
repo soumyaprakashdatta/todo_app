@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 import './todo_entry.dart';
 import './api.dart';
@@ -32,17 +33,31 @@ class TodoListViewState extends State<TodoListView> {
     if (todoTitleController.text.trim().isEmpty ||
         todoDescriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Color.fromARGB(200, 150, 1, 1),
           content: Text("empty title or description"),
           duration: Duration(seconds: 2)));
       return;
     }
 
-    await createTodoEntry(
-        todoTitleController.text, todoDescriptionController.text);
-    fetchTodos();
-    setState(() {
-      todoTitleController.clear();
-      todoDescriptionController.clear();
+    createTodoEntry(todoTitleController.text, todoDescriptionController.text)
+        .then((value) {
+      fetchTodos();
+      setState(() {
+        todoTitleController.clear();
+        todoDescriptionController.clear();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Color.fromARGB(199, 13, 122, 1),
+          content: Text("successfully created todo"),
+          duration: Duration(seconds: 2)));
+    }, onError: (err) {
+      if (err != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: const Color.fromARGB(200, 150, 1, 1),
+            content:
+                Text("error while adding todo entry, err=${err.toString()}"),
+            duration: const Duration(seconds: 2)));
+      }
     });
   }
 
@@ -53,33 +68,37 @@ class TodoListViewState extends State<TodoListView> {
         body: Column(children: <Widget>[
           Container(
               padding: const EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
-              child: Row(children: <Widget>[
-                Expanded(
-                    child: TextField(
-                  autocorrect: true,
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: todoTitleController,
-                  decoration: const InputDecoration(
-                      labelText: "todo title",
-                      labelStyle: TextStyle(color: Colors.blue)),
-                )),
-                Expanded(
-                    child: TextField(
-                  autocorrect: true,
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: todoDescriptionController,
-                  decoration: const InputDecoration(
-                      labelText: "todo descriptuon",
-                      labelStyle: TextStyle(color: Colors.blue)),
-                )),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                    onPressed: createEntry,
-                    child: const Text("ADD")),
-              ])),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: TextField(
+                          autocorrect: true,
+                          textCapitalization: TextCapitalization.sentences,
+                          controller: todoTitleController,
+                          decoration: const InputDecoration(
+                              labelText: "todo title",
+                              labelStyle: TextStyle(color: Colors.blue)),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: TextField(
+                          autocorrect: true,
+                          textCapitalization: TextCapitalization.sentences,
+                          controller: todoDescriptionController,
+                          decoration: const InputDecoration(
+                              labelText: "todo descriptuon",
+                              labelStyle: TextStyle(color: Colors.blue)),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blueAccent,
+                        ),
+                        onPressed: createEntry,
+                        child: const Text("ADD")),
+                  ])),
           Expanded(
               child: FutureBuilder<List<TodoEntry>>(
                   future: todos,
@@ -87,11 +106,11 @@ class TodoListViewState extends State<TodoListView> {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:
                       case ConnectionState.waiting:
-                        return Center(
-                          child: Container(
+                        return const Center(
+                          child: SizedBox(
                               width: 100,
                               height: 100,
-                              child: const CircularProgressIndicator()),
+                              child: CircularProgressIndicator()),
                         );
                       default:
                         if (snapshot.hasError) {
