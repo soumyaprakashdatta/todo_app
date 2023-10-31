@@ -7,7 +7,6 @@ Future<List<TodoEntry>> fetchTodoEntries() async {
   final ParseResponse apiResponse =
       await QueryBuilder<ParseObject>(ParseObject('todo')).query();
   if (apiResponse.success && apiResponse.results != null) {
-    // Let's show the results
     for (var o in apiResponse.results!) {
       developer.log((o as ParseObject).toString());
     }
