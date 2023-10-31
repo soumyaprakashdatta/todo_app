@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './todo_entry.dart';
 import './api.dart';
+import './util.dart';
 
 class Todo extends StatelessWidget {
   const Todo({super.key});
@@ -128,13 +129,11 @@ class TodoListViewState extends State<TodoListView> {
                                 var title = snapshot.data![index].title;
                                 var description =
                                     snapshot.data![index].description;
-                                var date = DateTime.parse(
+                                var sinceStr = getTimeSinceString(
                                     snapshot.data![index].createdAt);
-                                var dateAgo =
-                                    DateTime.now().difference(date).inHours;
                                 return ListTile(
-                                  title: Text(
-                                      "$title - $description - ${dateAgo.toString()} hr ago"),
+                                  title:
+                                      Text("$title - $description - $sinceStr"),
                                 );
                               });
                         }
