@@ -64,7 +64,10 @@ class TodoListViewState extends State<TodoListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Today's tasks")),
+        appBar: AppBar(
+          title: const Text("Today's tasks"),
+          backgroundColor: const Color.fromARGB(255, 0, 18, 182),
+        ),
         body: Column(children: <Widget>[
           Container(
               padding: const EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
@@ -79,7 +82,8 @@ class TodoListViewState extends State<TodoListView> {
                           controller: todoTitleController,
                           decoration: const InputDecoration(
                               labelText: "todo title",
-                              labelStyle: TextStyle(color: Colors.blue)),
+                              labelStyle: TextStyle(
+                                  color: Color.fromARGB(255, 0, 18, 182))),
                         )),
                     Padding(
                         padding: const EdgeInsets.all(16),
@@ -89,12 +93,14 @@ class TodoListViewState extends State<TodoListView> {
                           controller: todoDescriptionController,
                           decoration: const InputDecoration(
                               labelText: "todo descriptuon",
-                              labelStyle: TextStyle(color: Colors.blue)),
+                              labelStyle: TextStyle(
+                                  color: Color.fromARGB(255, 0, 18, 182))),
                         )),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor:
+                              const Color.fromARGB(255, 0, 18, 182),
                         ),
                         onPressed: createEntry,
                         child: const Text("ADD")),
