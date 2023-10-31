@@ -24,6 +24,10 @@ class TodoListViewState extends State<TodoListView> {
   Future<List<TodoEntry>> todos = fetchTodoEntries();
   final todoController = TextEditingController();
 
+  void fetchTodos() async {
+    todos = fetchTodoEntries();
+  }
+
   void createEntry() async {
     if (todoController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -32,7 +36,7 @@ class TodoListViewState extends State<TodoListView> {
     }
 
     await createTodoEntry(todoController.text, "abcd");
-
+    fetchTodos();
     setState(() {
       todoController.clear();
     });
