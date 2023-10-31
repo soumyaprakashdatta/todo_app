@@ -122,23 +122,31 @@ class TodoListViewState extends State<TodoListView> {
                             child: Text("No todo found"),
                           );
                         } else {
-                          return ListView.builder(
-                              itemCount: snapshot.data?.length,
-                              padding: const EdgeInsets.all(16),
-                              itemBuilder: (context, index) {
-                                var title = snapshot.data![index].title;
-                                var description =
-                                    snapshot.data![index].description;
-                                var sinceStr = getTimeSinceString(
-                                    snapshot.data![index].createdAt);
-                                return ListTile(
-                                  title:
-                                      Text("$title - $description - $sinceStr"),
-                                );
-                              });
+                          return TaskListEntryView(data: snapshot.data!);
                         }
                     }
                   }))
         ]));
+  }
+}
+
+class TaskListEntryView extends StatelessWidget {
+  const TaskListEntryView({super.key, required this.data});
+
+  final List<TodoEntry> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: data.length,
+        padding: const EdgeInsets.all(16),
+        itemBuilder: (context, index) {
+          var title = data[index].title;
+          var description = data[index].description;
+          var sinceStr = getTimeSinceString(data[index].createdAt);
+          return ListTile(
+            title: Text("$title - $description - $sinceStr"),
+          );
+        });
   }
 }
