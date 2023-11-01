@@ -136,27 +136,48 @@ class TodoListViewState extends State<TodoListView> {
   }
 }
 
-class TaskListEntryView extends StatelessWidget {
+class TaskListEntryView extends StatefulWidget {
   const TaskListEntryView({super.key, required this.data});
 
   final List<TodoEntry> data;
 
   @override
+  TaskListEntryViewState createState() => TaskListEntryViewState();
+}
+
+class TaskListEntryViewState extends State<TaskListEntryView> {
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: data.length,
+        itemCount: widget.data.length,
         padding: const EdgeInsets.all(16),
         itemBuilder: (context, index) {
-          var title = data[index].title;
-          var description = data[index].description;
-          var sinceStr = getTimeSinceString(data[index].createdAt);
+          var title = widget.data[index].title;
+          var description = widget.data[index].description;
+          var sinceStr = getTimeSinceString(widget.data[index].createdAt);
           return Card(
-              child: ListTile(
-                title: Text("$title - $sinceStr"),
-                subtitle: Text(description),
-                tileColor: Colors.deepOrange.shade200,
-              )
-          );
+              child: CheckboxListTile(
+            value: widget.data[index].done,
+            onChanged: (v) => setState(() {
+              widget.data[index].done = !widget.data[index].done;
+            }),
+            title: Text(
+              "$title - $sinceStr",
+              style: const TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(
+              description,
+              style: const TextStyle(color: Colors.white),
+            ),
+            tileColor: Colors.blueGrey.shade700,
+            selectedTileColor: Colors.black,
+            fillColor: MaterialStateProperty.resolveWith((states) {
+              if (!states.contains(MaterialState.selected)) {
+                return Colors.white;
+              }
+              return null;
+            }),
+          ));
         });
   }
 }

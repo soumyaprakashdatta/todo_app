@@ -13,10 +13,13 @@ Future<List<TodoEntry>> fetchTodoEntries() async {
 
     final maps =
         jsonDecode(apiResponse.results.toString()).cast<Map<String, dynamic>>();
-    return List.generate(maps.length, (i) {
+    List<TodoEntry> entries = List.generate(maps.length, (i) {
       return TodoEntry.fromMap(maps[i]);
     });
+    developer.log("fetched entries: ${entries.toString()}");
+    return entries;
   }
+  developer.log("faced some issue while fetching todo entries");
   throw Exception("error while fetching data");
 }
 
