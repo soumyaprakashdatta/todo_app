@@ -92,7 +92,7 @@ class TodoListViewState extends State<TodoListView> {
                           textCapitalization: TextCapitalization.sentences,
                           controller: todoDescriptionController,
                           decoration: const InputDecoration(
-                              labelText: "todo descriptuon",
+                              labelText: "todo description",
                               labelStyle: TextStyle(
                                   color: Color.fromARGB(255, 0, 18, 182))),
                         )),
@@ -150,8 +150,12 @@ class TaskListEntryView extends StatelessWidget {
           var title = data[index].title;
           var description = data[index].description;
           var sinceStr = getTimeSinceString(data[index].createdAt);
-          return ListTile(
-            title: Text("$title - $description - $sinceStr"),
+          return Card(
+              child: ListTile(
+                title: Text("$title - $sinceStr"),
+                subtitle: Text(description),
+                tileColor: Colors.deepOrange.shade200,
+              )
           );
         });
   }
