@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+
 import "./todo.dart";
 
 Future<void> main() async {
@@ -24,6 +25,11 @@ Future<Parse> initParseSDK() async {
   const keyClientKey = String.fromEnvironment('KeyClientKey');
   const keyParseServerUrl = String.fromEnvironment('KeyParseServerUrl');
 
-  return await Parse().initialize(keyApplicationId, keyParseServerUrl,
-      clientKey: keyClientKey, autoSendSessionId: true, debug: true);
+  return await Parse().initialize(
+    keyApplicationId,
+    keyParseServerUrl,
+    clientKey: keyClientKey,
+    autoSendSessionId: true,
+    debug: true,
+  );
 }

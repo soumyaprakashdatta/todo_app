@@ -39,26 +39,31 @@ class TodoListViewState extends State<TodoListView> {
       return;
     }
 
-    createTodoEntry(todoTitleController.text, todoDescriptionController.text)
-        .then((value) {
-      fetchTodos();
-      setState(() {
-        todoTitleController.clear();
-        todoDescriptionController.clear();
-      });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          backgroundColor: Color.fromARGB(199, 13, 122, 1),
-          content: Text("successfully created todo"),
-          duration: Duration(seconds: 2)));
-    }, onError: (err) {
-      if (err != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-            content:
-                Text("error while adding todo entry, err=${err.toString()}"),
-            duration: const Duration(seconds: 2)));
-      }
-    });
+    createTodoEntry(
+      todoTitleController.text,
+      todoDescriptionController.text,
+    ).then(
+      (value) {
+        fetchTodos();
+        setState(() {
+          todoTitleController.clear();
+          todoDescriptionController.clear();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            backgroundColor: Color.fromARGB(199, 13, 122, 1),
+            content: Text("successfully created todo"),
+            duration: Duration(seconds: 2)));
+      },
+      onError: (err) {
+        if (err != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: const Color.fromARGB(200, 150, 1, 1),
+              content:
+                  Text("error while adding todo entry, err=${err.toString()}"),
+              duration: const Duration(seconds: 2)));
+        }
+      },
+    );
   }
 
   @override
@@ -156,28 +161,33 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
           var description = widget.data[index].description;
           var sinceStr = getTimeSinceString(widget.data[index].createdAt);
           return Card(
-              child: CheckboxListTile(
-            value: widget.data[index].done,
-            onChanged: (v) => setState(() {
-              widget.data[index].done = !widget.data[index].done;
-            }),
-            title: Text(
-              "$title - $sinceStr",
-              style: const TextStyle(color: Colors.white),
+            child: CheckboxListTile(
+              value: widget.data[index].done,
+              onChanged: (v) => setState(
+                () {
+                  widget.data[index].done = !widget.data[index].done;
+                },
+              ),
+              title: Text(
+                "$title - $sinceStr",
+                style: const TextStyle(color: Colors.white),
+              ),
+              subtitle: Text(
+                description,
+                style: const TextStyle(color: Colors.white),
+              ),
+              tileColor: Colors.blueGrey.shade700,
+              selectedTileColor: Colors.black,
+              fillColor: MaterialStateProperty.resolveWith(
+                (states) {
+                  if (!states.contains(MaterialState.selected)) {
+                    return Colors.white;
+                  }
+                  return null;
+                },
+              ),
             ),
-            subtitle: Text(
-              description,
-              style: const TextStyle(color: Colors.white),
-            ),
-            tileColor: Colors.blueGrey.shade700,
-            selectedTileColor: Colors.black,
-            fillColor: MaterialStateProperty.resolveWith((states) {
-              if (!states.contains(MaterialState.selected)) {
-                return Colors.white;
-              }
-              return null;
-            }),
-          ));
+          );
         });
   }
 }
