@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './todo_entry.dart';
 import './api.dart';
+import './todo_entry.dart';
 import './util.dart';
 
 class Todo extends StatelessWidget {
@@ -29,9 +29,8 @@ class TodoListViewState extends State<TodoListView> {
     todos = fetchTodoEntries();
   }
 
-  void createEntry() async {
-    if (todoTitleController.text.trim().isEmpty ||
-        todoDescriptionController.text.trim().isEmpty) {
+  Future<void> createEntry(BuildContext providedContext, VoidCallback onSuccess) async {
+    if (todoTitleController.text.trim().isEmpty || todoDescriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color.fromARGB(200, 150, 1, 1),
           content: Text("empty title or description"),
@@ -49,6 +48,7 @@ class TodoListViewState extends State<TodoListView> {
           todoTitleController.clear();
           todoDescriptionController.clear();
         });
+        onSuccess.call();
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Color.fromARGB(199, 13, 122, 1),
             content: Text("successfully created todo"),
@@ -58,8 +58,7 @@ class TodoListViewState extends State<TodoListView> {
         if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-              content:
-                  Text("error while adding todo entry, err=${err.toString()}"),
+              content: Text("error while adding todo entry, err=${err.toString()}"),
               duration: const Duration(seconds: 2)));
         }
       },
@@ -76,40 +75,64 @@ class TodoListViewState extends State<TodoListView> {
         body: Column(children: <Widget>[
           Container(
               padding: const EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: TextField(
-                          autocorrect: true,
-                          textCapitalization: TextCapitalization.sentences,
-                          controller: todoTitleController,
-                          decoration: const InputDecoration(
-                              labelText: "todo title",
-                              labelStyle: TextStyle(
-                                  color: Color.fromARGB(255, 0, 18, 182))),
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: TextField(
-                          autocorrect: true,
-                          textCapitalization: TextCapitalization.sentences,
-                          controller: todoDescriptionController,
-                          decoration: const InputDecoration(
-                              labelText: "todo description",
-                              labelStyle: TextStyle(
-                                  color: Color.fromARGB(255, 0, 18, 182))),
-                        )),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor:
-                              const Color.fromARGB(255, 0, 18, 182),
-                        ),
-                        onPressed: createEntry,
-                        child: const Text("ADD")),
-                  ])),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 0, 18, 182),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              scrollable: true,
+                              title: const Text("Add todo"),
+                              content: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Form(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      TextFormField(
+                                        autocorrect: true,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        controller: todoTitleController,
+                                        decoration: const InputDecoration(
+                                            labelText: "todo title",
+                                            labelStyle: TextStyle(color: Color.fromARGB(255, 0, 18, 182))),
+                                      ),
+                                      TextFormField(
+                                        autocorrect: true,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        controller: todoDescriptionController,
+                                        decoration: const InputDecoration(
+                                            labelText: "todo description",
+                                            labelStyle: TextStyle(color: Color.fromARGB(255, 0, 18, 182))),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await createEntry(context, () {
+                                      if (!mounted) {
+                                        return;
+                                      }
+                                      Navigator.of(context).pop();
+                                    });
+                                  },
+                                  child: const Text("submit"),
+                                ),
+                              ],
+                            );
+                          });
+                      // createEntry();
+                    },
+                    child: const Text("ADD")),
+              ])),
           Expanded(
               child: FutureBuilder<List<TodoEntry>>(
                   future: todos,
@@ -118,10 +141,7 @@ class TodoListViewState extends State<TodoListView> {
                       case ConnectionState.none:
                       case ConnectionState.waiting:
                         return const Center(
-                          child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: CircularProgressIndicator()),
+                          child: SizedBox(width: 100, height: 100, child: CircularProgressIndicator()),
                         );
                       default:
                         if (snapshot.hasError) {
