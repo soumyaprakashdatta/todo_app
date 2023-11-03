@@ -48,3 +48,12 @@ Future<bool> updateTodoEntry(String id, String key, Object val) async {
   }
   throw Exception("error while updating todo entry for id=$id");
 }
+
+Future<bool> deleteTodoEntry(String id) async {
+  var todoEntry = ParseObject("todo")..objectId = id;
+  final ParseResponse response = await todoEntry.delete();
+  if (response.success && response.results != null) {
+    return true;
+  }
+  throw Exception("error while deleting todo entry for id=$id");
+}

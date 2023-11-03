@@ -109,6 +109,23 @@ class TodoListViewState extends State<TodoListView> {
     ).whenComplete(() => _setAppbarLoading(false));
   }
 
+  Future<void> deleteEntry(TodoEntry entry) async {
+    _setAppbarLoading(true);
+    _setListLoading(false);
+    deleteTodoEntry(entry.objectId).then((value) {
+      fetchTodos();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: const Color.fromARGB(199, 13, 122, 1),
+          content: Text("successfully deleted todo with title=${entry.title}"),
+          duration: const Duration(seconds: 2)));
+    }, onError: (err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: const Color.fromARGB(200, 150, 1, 1),
+          content: Text("error while deleting todo entry, err=${err.toString()}"),
+          duration: const Duration(seconds: 2)));
+    }).whenComplete(() => _setAppbarLoading(false));
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -210,6 +227,7 @@ class TodoListViewState extends State<TodoListView> {
                         return TaskListEntryView(
                           data: snapshot.data!,
                           toggleTodoEntryDone: toggleTodoEntryDone,
+                          deleteEntry: deleteEntry,
                         );
                       }
                     }
@@ -219,10 +237,12 @@ class TodoListViewState extends State<TodoListView> {
 }
 
 class TaskListEntryView extends StatefulWidget {
-  const TaskListEntryView({super.key, required this.data, required this.toggleTodoEntryDone});
+  const TaskListEntryView(
+      {super.key, required this.data, required this.toggleTodoEntryDone, required this.deleteEntry});
 
   final List<TodoEntry> data;
   final Future<void> Function(TodoEntry) toggleTodoEntryDone;
+  final Future<void> Function(TodoEntry) deleteEntry;
 
   @override
   TaskListEntryViewState createState() => TaskListEntryViewState();
@@ -250,7 +270,7 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
                 value: widget.data[index].done,
                 onChanged: (v) => setState(
                   () {
-                    // widget.data[index].done = !widget.data[index].done;
+                    developer.log("pressed toggle for $title, prev_state=${widget.data[index].done}");
                     widget.toggleTodoEntryDone(widget.data[index]);
                   },
                 ),
@@ -280,6 +300,7 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
                   IconButton(
                     onPressed: () {
                       developer.log("pressed delete for $title");
+                      widget.deleteEntry(widget.data[index]);
                     },
                     icon: const Icon(
                       Icons.delete,
