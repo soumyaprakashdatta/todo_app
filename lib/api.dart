@@ -6,7 +6,10 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 import './todo_entry.dart';
 
 Future<List<TodoEntry>> fetchTodoEntries() async {
-  final ParseResponse apiResponse = await QueryBuilder<ParseObject>(ParseObject('todo')).query();
+  final QueryBuilder<ParseObject> parseQuery = QueryBuilder<ParseObject>(ParseObject('todo'));
+  parseQuery.orderByDescending('createdAt');
+
+  final ParseResponse apiResponse = await parseQuery.query();
   if (apiResponse.success && apiResponse.results != null) {
     for (var o in apiResponse.results!) {
       developer.log((o as ParseObject).toString());

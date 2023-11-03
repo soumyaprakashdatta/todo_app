@@ -132,7 +132,7 @@ class TodoListViewState extends State<TodoListView> {
     developer.log("loading: $appBarLoading");
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Today's tasks"),
+        title: const Text("My Tasks"),
         backgroundColor: const Color.fromARGB(255, 0, 18, 182),
         bottom: appBarLoading
             ? PreferredSize(
@@ -185,7 +185,7 @@ class TodoListViewState extends State<TodoListView> {
       ]),
       floatingActionButton: FloatingActionButton(
         tooltip: "+",
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           showDialog(
               context: context,
