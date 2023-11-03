@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 
 import './api.dart';
@@ -21,9 +23,31 @@ class TodoListView extends StatefulWidget {
 }
 
 class TodoListViewState extends State<TodoListView> {
-  Future<List<TodoEntry>> todos = fetchTodoEntries();
+  late Future<List<TodoEntry>> todos;
   final todoTitleController = TextEditingController();
   final todoDescriptionController = TextEditingController();
+  bool appBarLoading = false;
+  bool listLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTodos();
+  }
+
+  void _setAppbarLoading(bool val) {
+    setState(() {
+      developer.log("called _setLoading with $val");
+      appBarLoading = val;
+    });
+  }
+
+  void _setListLoading(bool val) {
+    setState(() {
+      developer.log("called _setLoading with $val");
+      listLoading = val;
+    });
+  }
 
   void fetchTodos() async {
     todos = fetchTodoEntries();
@@ -38,6 +62,8 @@ class TodoListViewState extends State<TodoListView> {
       return;
     }
 
+    _setAppbarLoading(true);
+    _setListLoading(false);
     createTodoEntry(
       todoTitleController.text,
       todoDescriptionController.text,
@@ -62,15 +88,43 @@ class TodoListViewState extends State<TodoListView> {
               duration: const Duration(seconds: 2)));
         }
       },
-    );
+    ).whenComplete(() => _setAppbarLoading(false));
+  }
+
+  Future<void> toggleTodoEntryDone(TodoEntry entry) async {
+    _setAppbarLoading(true);
+    _setListLoading(false);
+    updateTodoEntry(entry.objectId, "done", !entry.done).then(
+      (value) {
+        fetchTodos();
+      },
+      onError: (err) {
+        if (err != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: const Color.fromARGB(200, 150, 1, 1),
+              content: Text("error while updating todo entry, err=${err.toString()}"),
+              duration: const Duration(seconds: 2)));
+        }
+      },
+    ).whenComplete(() => _setAppbarLoading(false));
   }
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    developer.log("loading: $appBarLoading");
     return Scaffold(
         appBar: AppBar(
           title: const Text("Today's tasks"),
           backgroundColor: const Color.fromARGB(255, 0, 18, 182),
+          bottom: appBarLoading
+              ? PreferredSize(
+                  preferredSize: Size(size.width, 0),
+                  child: const LinearProgressIndicator(
+                    backgroundColor: Colors.red,
+                  ),
+                )
+              : null,
         ),
         body: Column(children: <Widget>[
           Container(
@@ -137,24 +191,27 @@ class TodoListViewState extends State<TodoListView> {
               child: FutureBuilder<List<TodoEntry>>(
                   future: todos,
                   builder: (ctx, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.none:
-                      case ConnectionState.waiting:
+                    if (listLoading &&
+                        (snapshot.connectionState == ConnectionState.none ||
+                            snapshot.connectionState == ConnectionState.waiting)) {
+                      return const Center(
+                        child: SizedBox(width: 100, height: 100, child: CircularProgressIndicator()),
+                      );
+                    } else {
+                      if (snapshot.hasError) {
                         return const Center(
-                          child: SizedBox(width: 100, height: 100, child: CircularProgressIndicator()),
+                          child: Text("Error while fetching todo list"),
                         );
-                      default:
-                        if (snapshot.hasError) {
-                          return const Center(
-                            child: Text("Error while fetching todo list"),
-                          );
-                        } else if (!snapshot.hasData) {
-                          return const Center(
-                            child: Text("No todo found"),
-                          );
-                        } else {
-                          return TaskListEntryView(data: snapshot.data!);
-                        }
+                      } else if (!snapshot.hasData) {
+                        return const Center(
+                          child: Text("No todo found"),
+                        );
+                      } else {
+                        return TaskListEntryView(
+                          data: snapshot.data!,
+                          toggleTodoEntryDone: toggleTodoEntryDone,
+                        );
+                      }
                     }
                   }))
         ]));
@@ -162,15 +219,20 @@ class TodoListViewState extends State<TodoListView> {
 }
 
 class TaskListEntryView extends StatefulWidget {
-  const TaskListEntryView({super.key, required this.data});
+  const TaskListEntryView({super.key, required this.data, required this.toggleTodoEntryDone});
 
   final List<TodoEntry> data;
+  final Future<void> Function(TodoEntry) toggleTodoEntryDone;
 
   @override
   TaskListEntryViewState createState() => TaskListEntryViewState();
 }
 
 class TaskListEntryViewState extends State<TaskListEntryView> {
+  final border = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(10),
+  );
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -181,31 +243,53 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
           var description = widget.data[index].description;
           var sinceStr = getTimeSinceString(widget.data[index].createdAt);
           return Card(
-            child: CheckboxListTile(
-              value: widget.data[index].done,
-              onChanged: (v) => setState(
-                () {
-                  widget.data[index].done = !widget.data[index].done;
-                },
+            shape: border,
+            child: ListTile(
+              shape: border,
+              leading: Checkbox(
+                value: widget.data[index].done,
+                onChanged: (v) => setState(
+                  () {
+                    // widget.data[index].done = !widget.data[index].done;
+                    widget.toggleTodoEntryDone(widget.data[index]);
+                  },
+                ),
+                fillColor: MaterialStateProperty.resolveWith(
+                  (states) {
+                    if (!states.contains(MaterialState.selected)) {
+                      return Colors.white;
+                    }
+                    return null;
+                  },
+                ),
               ),
-              title: Text(
-                "$title - $sinceStr",
-                style: const TextStyle(color: Colors.white),
-              ),
-              subtitle: Text(
-                description,
-                style: const TextStyle(color: Colors.white),
+              title: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: ListTile(
+                      title: Text(
+                        "$title - $sinceStr",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        description,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      developer.log("pressed delete for $title");
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                  )
+                ],
               ),
               tileColor: Colors.blueGrey.shade700,
               selectedTileColor: Colors.black,
-              fillColor: MaterialStateProperty.resolveWith(
-                (states) {
-                  if (!states.contains(MaterialState.selected)) {
-                    return Colors.white;
-                  }
-                  return null;
-                },
-              ),
             ),
           );
         });

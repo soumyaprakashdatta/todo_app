@@ -13,27 +13,26 @@ class TodoEntry {
   final String updatedAt;
   final String title;
   final String description;
-  bool done;
+  final bool done;
 
-  TodoEntry(
-    this.done, {
+  TodoEntry({
     required this.className,
     required this.objectId,
     required this.createdAt,
     required this.updatedAt,
     required this.title,
     required this.description,
+    required this.done,
   });
 
   factory TodoEntry.fromMap(Map<String, dynamic> map) {
     return TodoEntry(
-      map["done"] ?? false,
-      className: map['className'],
-      objectId: map['objectId'],
-      createdAt: map['createdAt'],
-      updatedAt: map['updatedAt'],
-      title: map['title'],
-      description: map['description'],
-    );
+        className: map['className'],
+        objectId: map['objectId'],
+        createdAt: map['createdAt'],
+        updatedAt: map['updatedAt'],
+        title: map['title'],
+        description: map['description'],
+        done: map["done"]);
   }
 }
