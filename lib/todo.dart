@@ -11,7 +11,11 @@ class Todo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: "Todo App", home: TodoListView());
+    return MaterialApp(
+      title: "Todo App",
+      home: const TodoListView(),
+      theme: ThemeData(scaffoldBackgroundColor: Colors.blueGrey.shade900),
+    );
   }
 }
 
@@ -133,7 +137,7 @@ class TodoListViewState extends State<TodoListView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Tasks"),
-        backgroundColor: const Color.fromARGB(255, 0, 18, 182),
+        backgroundColor: Colors.blueGrey.shade900,
         bottom: appBarLoading
             ? PreferredSize(
                 preferredSize: Size(size.width, 0),
@@ -251,9 +255,18 @@ class DividerWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(children: <Widget>[
-      const Expanded(child: Divider()),
-      Text(text),
-      const Expanded(child: Divider()),
+      Expanded(
+          child: Divider(
+        color: Colors.blueGrey.shade300,
+      )),
+      Text(text,
+          style: const TextStyle(
+            color: Colors.white,
+          )),
+      Expanded(
+          child: Divider(
+        color: Colors.blueGrey.shade300,
+      )),
     ]);
   }
 }
@@ -282,6 +295,13 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
     return TextDecoration.none;
   }
 
+  Color getTileColor(bool done) {
+    if (done == true) {
+      return Colors.blueGrey.shade700;
+    }
+    return Colors.blueGrey.shade500;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -299,6 +319,7 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
               shape: border,
               leading: Checkbox(
                 value: widget.data[index].done,
+                shape: const CircleBorder(),
                 onChanged: (v) => setState(
                   () {
                     developer.log("pressed toggle for $title, prev_state=${widget.data[index].done}");
@@ -310,7 +331,7 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
                     if (!states.contains(MaterialState.selected)) {
                       return Colors.white;
                     }
-                    return null;
+                    return Colors.blueGrey.shade900;
                   },
                 ),
               ),
@@ -333,14 +354,14 @@ class TaskListEntryViewState extends State<TaskListEntryView> {
                       developer.log("pressed delete for $title");
                       widget.deleteEntry(widget.data[index]);
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.delete,
-                      color: Colors.red,
+                      color: Colors.red.shade300,
                     ),
                   )
                 ],
               ),
-              tileColor: Colors.blueGrey.shade700,
+              tileColor: getTileColor(widget.data[index].done),
               selectedTileColor: Colors.black,
             ),
           );
