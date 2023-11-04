@@ -1,24 +1,12 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:todo_app/add_todo_page.dart';
-
-import './api.dart';
-import './todo_entry.dart';
-import './util.dart';
-
-class Todo extends StatelessWidget {
-  const Todo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Todo App",
-      home: const TodoListView(),
-      theme: ThemeData(scaffoldBackgroundColor: Colors.blueGrey.shade900),
-    );
-  }
-}
+import 'package:todo_app/api.dart';
+import 'package:todo_app/models/todo_entry.dart';
+import 'package:todo_app/util.dart';
+import 'package:todo_app/widgets/add_todo_page.dart';
+import 'package:todo_app/widgets/divider_with_text_widget.dart';
+import 'package:todo_app/widgets/task_list_entry_widget.dart';
 
 class TodoListView extends StatefulWidget {
   const TodoListView({super.key});
@@ -177,13 +165,13 @@ class TodoListViewState extends State<TodoListView> {
                     } else {
                       return ListView(
                         children: <Widget>[
-                          TaskListEntryView(
+                          TaskListEntryWidget(
                             data: snapshot.data!.where((e) => e.done == false).toList(),
                             toggleTodoEntryDone: toggleTodoEntryDone,
                             deleteEntry: deleteEntry,
                           ),
-                          const DividerWithText(text: "COMPLETED"),
-                          TaskListEntryView(
+                          const DividerWithTextWidget(text: "COMPLETED"),
+                          TaskListEntryWidget(
                             data: snapshot.data!.where((e) => e.done == true).toList(),
                             toggleTodoEntryDone: toggleTodoEntryDone,
                             deleteEntry: deleteEntry,
@@ -198,154 +186,11 @@ class TodoListViewState extends State<TodoListView> {
         tooltip: "+",
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(_createRoute(triggerTodoRefresh));
+          Navigator.of(context).push(createRoute(AddTodoWidget(
+            triggerTodoRefresh: triggerTodoRefresh,
+          )));
         },
       ),
     );
-  }
-}
-
-Route _createRoute(Function(bool) triggerTodoRefresh) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => AddTodoWidget(
-      triggerTodoRefresh: triggerTodoRefresh,
-    ),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
-}
-
-class DividerWithText extends StatelessWidget {
-  const DividerWithText({
-    super.key,
-    required this.text,
-  });
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(children: <Widget>[
-      Expanded(
-          child: Divider(
-        color: Colors.blueGrey.shade300,
-      )),
-      Text(text,
-          style: const TextStyle(
-            color: Colors.white,
-          )),
-      Expanded(
-          child: Divider(
-        color: Colors.blueGrey.shade300,
-      )),
-    ]);
-  }
-}
-
-class TaskListEntryView extends StatefulWidget {
-  const TaskListEntryView(
-      {super.key, required this.data, required this.toggleTodoEntryDone, required this.deleteEntry});
-
-  final List<TodoEntry> data;
-  final Future<void> Function(TodoEntry) toggleTodoEntryDone;
-  final Future<void> Function(TodoEntry) deleteEntry;
-
-  @override
-  TaskListEntryViewState createState() => TaskListEntryViewState();
-}
-
-class TaskListEntryViewState extends State<TaskListEntryView> {
-  final border = RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(10),
-  );
-
-  TextDecoration getTextDecoration(bool done) {
-    if (done == true) {
-      return TextDecoration.lineThrough;
-    }
-    return TextDecoration.none;
-  }
-
-  Color getTileColor(bool done) {
-    if (done == true) {
-      return Colors.blueGrey.shade700;
-    }
-    return Colors.blueGrey.shade500;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: widget.data.length,
-        padding: const EdgeInsets.all(16),
-        itemBuilder: (context, index) {
-          var title = widget.data[index].title;
-          var description = widget.data[index].description;
-          var sinceStr = getTimeSinceString(widget.data[index].createdAt);
-          return Card(
-            shape: border,
-            child: ListTile(
-              shape: border,
-              leading: Checkbox(
-                value: widget.data[index].done,
-                shape: const CircleBorder(),
-                onChanged: (v) => setState(
-                  () {
-                    developer.log("pressed toggle for $title, prev_state=${widget.data[index].done}");
-                    widget.toggleTodoEntryDone(widget.data[index]);
-                  },
-                ),
-                fillColor: MaterialStateProperty.resolveWith(
-                  (states) {
-                    if (!states.contains(MaterialState.selected)) {
-                      return Colors.white;
-                    }
-                    return Colors.blueGrey.shade900;
-                  },
-                ),
-              ),
-              title: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: ListTile(
-                      title: Text(
-                        "$title - $sinceStr",
-                        style: TextStyle(color: Colors.white, decoration: getTextDecoration(widget.data[index].done)),
-                      ),
-                      subtitle: Text(
-                        description,
-                        style: TextStyle(color: Colors.white, decoration: getTextDecoration(widget.data[index].done)),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      developer.log("pressed delete for $title");
-                      widget.deleteEntry(widget.data[index]);
-                    },
-                    icon: Icon(
-                      Icons.delete,
-                      color: Colors.red.shade300,
-                    ),
-                  )
-                ],
-              ),
-              tileColor: getTileColor(widget.data[index].done),
-              selectedTileColor: Colors.black,
-            ),
-          );
-        });
   }
 }

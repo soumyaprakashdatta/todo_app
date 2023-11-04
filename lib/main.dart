@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
-
-import './todo.dart';
+import 'package:todo_app/widgets/todo_list_view_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initParseSDK();
 
-  runApp(const MyApp());
+  runApp(const Todo());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Todo extends StatelessWidget {
+  const Todo({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Todo App",
-      home: Todo(),
+      home: const TodoListView(),
+      theme: ThemeData(scaffoldBackgroundColor: Colors.blueGrey.shade900),
     );
   }
 }

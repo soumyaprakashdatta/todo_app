@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
-import './todo_entry.dart';
+import 'models/todo_entry.dart';
 
 Future<List<TodoEntry>> fetchTodoEntries() async {
   final QueryBuilder<ParseObject> parseQuery = QueryBuilder<ParseObject>(ParseObject('todo'));
