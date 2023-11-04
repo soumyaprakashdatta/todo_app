@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:todo_app/add_todo_page.dart';
 
 import './api.dart';
 import './todo_entry.dart';
@@ -55,6 +56,12 @@ class TodoListViewState extends State<TodoListView> {
 
   void fetchTodos() async {
     todos = fetchTodoEntries();
+  }
+
+  void triggerTodoRefresh(bool toRefresh) {
+    if (toRefresh) {
+      fetchTodos();
+    }
   }
 
   Future<void> createEntry(BuildContext providedContext, VoidCallback onSuccess) async {
@@ -191,57 +198,31 @@ class TodoListViewState extends State<TodoListView> {
         tooltip: "+",
         child: const Icon(Icons.add),
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  scrollable: true,
-                  title: const Text("Add todo"),
-                  content: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Form(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          TextFormField(
-                            autocorrect: true,
-                            textCapitalization: TextCapitalization.sentences,
-                            controller: todoTitleController,
-                            decoration: const InputDecoration(
-                                labelText: "todo title", labelStyle: TextStyle(color: Color.fromARGB(255, 0, 18, 182))),
-                          ),
-                          TextFormField(
-                            autocorrect: true,
-                            textCapitalization: TextCapitalization.sentences,
-                            controller: todoDescriptionController,
-                            decoration: const InputDecoration(
-                                labelText: "todo description",
-                                labelStyle: TextStyle(color: Color.fromARGB(255, 0, 18, 182))),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        await createEntry(context, () {
-                          if (!mounted) {
-                            return;
-                          }
-                          Navigator.of(context).pop();
-                        });
-                      },
-                      child: const Text("submit"),
-                    ),
-                  ],
-                );
-              });
-          // createEntry();
+          Navigator.of(context).push(_createRoute(triggerTodoRefresh));
         },
       ),
     );
   }
+}
+
+Route _createRoute(Function(bool) triggerTodoRefresh) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => AddTodoWidget(
+      triggerTodoRefresh: triggerTodoRefresh,
+    ),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
 
 class DividerWithText extends StatelessWidget {
