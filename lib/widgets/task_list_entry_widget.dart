@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_entry.dart';
 import 'package:todo_app/util.dart';
+import 'package:todo_app/widgets/todo_details_widget.dart';
 
 class TaskListEntryWidget extends StatefulWidget {
   const TaskListEntryWidget(
@@ -80,6 +81,9 @@ class TaskListEntryViewState extends State<TaskListEntryWidget> {
                         description,
                         style: TextStyle(color: Colors.white, decoration: getTextDecoration(widget.data[index].done)),
                       ),
+                      onTap: () {
+                        Navigator.of(context).push(createRoute(TodoDetailsWidget(todo: widget.data[index])));
+                      },
                     ),
                   ),
                   IconButton(
