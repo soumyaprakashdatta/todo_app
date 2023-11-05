@@ -5,8 +5,7 @@ import 'package:todo_app/api.dart';
 import 'package:todo_app/models/todo_entry.dart';
 
 class EditTodoWidget extends StatefulWidget {
-  const EditTodoWidget(
-      {super.key, required this.todo, required this.triggerTodoRefresh});
+  const EditTodoWidget({super.key, required this.todo, required this.triggerTodoRefresh});
 
   final TodoEntry todo;
   final Function(bool) triggerTodoRefresh;
@@ -24,8 +23,7 @@ class EditTodoStateWidget extends State<EditTodoWidget> {
   void initState() {
     super.initState();
     todoTitleController = TextEditingController(text: widget.todo.title);
-    todoDescriptionController =
-        TextEditingController(text: widget.todo.description);
+    todoDescriptionController = TextEditingController(text: widget.todo.description);
   }
 
   void _setAppbarLoading(bool val) {
@@ -36,8 +34,7 @@ class EditTodoStateWidget extends State<EditTodoWidget> {
   }
 
   Future<void> editEntry(BuildContext providedContext) async {
-    if (todoTitleController.text.trim().isEmpty ||
-        todoDescriptionController.text.trim().isEmpty) {
+    if (todoTitleController.text.trim().isEmpty || todoDescriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color.fromARGB(200, 150, 1, 1),
           content: Text("empty title or description"),
@@ -60,15 +57,14 @@ class EditTodoStateWidget extends State<EditTodoWidget> {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Color.fromARGB(199, 13, 122, 1),
-            content: Text("successfully updated todo"),
+            content: Text("successfully updated todo 👍"),
             duration: Duration(seconds: 2)));
       },
       onError: (err) {
         if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-              content: Text(
-                  "error while updating todo entry, err=${err.toString()}"),
+              content: Text("⚠️ error while updating todo entry, err=${err.toString()}"),
               duration: const Duration(seconds: 2)));
         }
       },
@@ -108,8 +104,7 @@ class EditTodoStateWidget extends State<EditTodoWidget> {
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 20.0, horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16),
                     labelText: "Enter todo title",
                     labelStyle: TextStyle(
                       color: Colors.blueGrey.shade100,
@@ -128,8 +123,7 @@ class EditTodoStateWidget extends State<EditTodoWidget> {
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 20.0, horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16),
                     labelText: "Enter todo description",
                     labelStyle: TextStyle(
                       color: Colors.blueGrey.shade100,
@@ -141,8 +135,7 @@ class EditTodoStateWidget extends State<EditTodoWidget> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.blue.shade700),
+                      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.blue.shade700),
                     ),
                     onPressed: () {
                       editEntry(context);

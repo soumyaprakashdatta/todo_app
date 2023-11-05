@@ -25,8 +25,7 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
   }
 
   Future<void> createEntry(BuildContext providedContext) async {
-    if (todoTitleController.text.trim().isEmpty ||
-        todoDescriptionController.text.trim().isEmpty) {
+    if (todoTitleController.text.trim().isEmpty || todoDescriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color.fromARGB(200, 150, 1, 1),
           content: Text("empty title or description"),
@@ -48,15 +47,14 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Color.fromARGB(199, 13, 122, 1),
-            content: Text("successfully created todo"),
+            content: Text("successfully created todo 👍"),
             duration: Duration(seconds: 2)));
       },
       onError: (err) {
         if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-              content:
-                  Text("error while adding todo entry, err=${err.toString()}"),
+              content: Text("⚠️ error while adding todo entry, err=${err.toString()}"),
               duration: const Duration(seconds: 2)));
         }
       },
@@ -96,8 +94,7 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 20.0, horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16),
                     labelText: "Enter todo title",
                     labelStyle: TextStyle(
                       color: Colors.blueGrey.shade100,
@@ -116,8 +113,7 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 20.0, horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16),
                     labelText: "Enter todo description",
                     labelStyle: TextStyle(
                       color: Colors.blueGrey.shade100,
@@ -129,8 +125,7 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.blue.shade700),
+                      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.blue.shade700),
                     ),
                     onPressed: () {
                       createEntry(context);
