@@ -4,10 +4,10 @@ void createConfirmationDialog(
     BuildContext context,
     String dialogTitle,
     String dialogContent,
-    String mainActionTitle,
-    String alternativeActionTitle,
-    Function() onMainAction,
-    Function() onAlternativeAction) {
+    String continueActionTitle,
+    String cancelActionTitle,
+    Function() onContinue,
+    Function() onCancel) {
   // set up the buttons
   Widget cancelButton = OutlinedButton(
     style: ButtonStyle(
@@ -17,12 +17,12 @@ void createConfirmationDialog(
         },
       ),
     ),
-    child: Text(alternativeActionTitle,
+    child: Text(cancelActionTitle,
         style: const TextStyle(
           color: Colors.white,
         )),
     onPressed: () {
-      onAlternativeAction();
+      onCancel();
     },
   );
   Widget continueButton = OutlinedButton(
@@ -33,12 +33,12 @@ void createConfirmationDialog(
         },
       ),
     ),
-    child: Text(mainActionTitle,
+    child: Text(continueActionTitle,
         style: const TextStyle(
           color: Colors.white,
         )),
     onPressed: () {
-      onMainAction();
+      onContinue();
     },
   );
   // set up the AlertDialog
