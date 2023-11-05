@@ -89,37 +89,54 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                const SizedBox(height: 20),
                 TextFormField(
                   autocorrect: true,
                   textCapitalization: TextCapitalization.sentences,
                   controller: todoTitleController,
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 16),
                     labelText: "Enter todo title",
                     labelStyle: TextStyle(
                       color: Colors.blueGrey.shade100,
                     ),
+                    filled: true,
+                    fillColor: Colors.blueGrey.shade800,
                   ),
                 ),
+                const SizedBox(height: 20),
                 TextFormField(
                   autocorrect: true,
                   textCapitalization: TextCapitalization.sentences,
                   controller: todoDescriptionController,
+                  minLines: 3,
+                  maxLines: 10,
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 16),
                     labelText: "Enter todo description",
                     labelStyle: TextStyle(
                       color: Colors.blueGrey.shade100,
                     ),
+                    filled: true,
+                    fillColor: Colors.blueGrey.shade800,
                   ),
                 ),
+                const SizedBox(height: 20),
                 ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith(
+                          (states) => Colors.blue.shade700),
+                    ),
                     onPressed: () {
                       createEntry(context);
                     },
-                    child: const Text('Add!'))
+                    child: const Text('ADD'))
               ],
             ),
           ),

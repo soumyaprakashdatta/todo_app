@@ -52,8 +52,10 @@ class TodoListViewState extends State<TodoListView> {
     }
   }
 
-  Future<void> createEntry(BuildContext providedContext, VoidCallback onSuccess) async {
-    if (todoTitleController.text.trim().isEmpty || todoDescriptionController.text.trim().isEmpty) {
+  Future<void> createEntry(
+      BuildContext providedContext, VoidCallback onSuccess) async {
+    if (todoTitleController.text.trim().isEmpty ||
+        todoDescriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color.fromARGB(200, 150, 1, 1),
           content: Text("empty title or description"),
@@ -83,7 +85,8 @@ class TodoListViewState extends State<TodoListView> {
         if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-              content: Text("error while adding todo entry, err=${err.toString()}"),
+              content:
+                  Text("error while adding todo entry, err=${err.toString()}"),
               duration: const Duration(seconds: 2)));
         }
       },
@@ -101,7 +104,8 @@ class TodoListViewState extends State<TodoListView> {
         if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-              content: Text("error while updating todo entry, err=${err.toString()}"),
+              content: Text(
+                  "error while updating todo entry, err=${err.toString()}"),
               duration: const Duration(seconds: 2)));
         }
       },
@@ -120,7 +124,8 @@ class TodoListViewState extends State<TodoListView> {
     }, onError: (err) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-          content: Text("error while deleting todo entry, err=${err.toString()}"),
+          content:
+              Text("error while deleting todo entry, err=${err.toString()}"),
           duration: const Duration(seconds: 2)));
     }).whenComplete(() => _setAppbarLoading(false));
   }
@@ -149,9 +154,13 @@ class TodoListViewState extends State<TodoListView> {
                 builder: (ctx, snapshot) {
                   if (listLoading &&
                       (snapshot.connectionState == ConnectionState.none ||
-                          snapshot.connectionState == ConnectionState.waiting)) {
+                          snapshot.connectionState ==
+                              ConnectionState.waiting)) {
                     return const Center(
-                      child: SizedBox(width: 100, height: 100, child: CircularProgressIndicator()),
+                      child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: CircularProgressIndicator()),
                     );
                   } else {
                     if (snapshot.hasError) {
@@ -166,13 +175,17 @@ class TodoListViewState extends State<TodoListView> {
                       return ListView(
                         children: <Widget>[
                           TaskListEntryWidget(
-                            data: snapshot.data!.where((e) => e.done == false).toList(),
+                            data: snapshot.data!
+                                .where((e) => e.done == false)
+                                .toList(),
                             toggleTodoEntryDone: toggleTodoEntryDone,
                             deleteEntry: deleteEntry,
                           ),
                           const DividerWithTextWidget(text: "COMPLETED"),
                           TaskListEntryWidget(
-                            data: snapshot.data!.where((e) => e.done == true).toList(),
+                            data: snapshot.data!
+                                .where((e) => e.done == true)
+                                .toList(),
                             toggleTodoEntryDone: toggleTodoEntryDone,
                             deleteEntry: deleteEntry,
                           ),
@@ -184,12 +197,14 @@ class TodoListViewState extends State<TodoListView> {
       ]),
       floatingActionButton: FloatingActionButton(
         tooltip: "+",
-        child: const Icon(Icons.add),
+        backgroundColor:
+            MaterialStateColor.resolveWith((states) => Colors.blue.shade700),
         onPressed: () {
           Navigator.of(context).push(createRoute(AddTodoWidget(
             triggerTodoRefresh: triggerTodoRefresh,
           )));
         },
+        child: const Icon(Icons.add),
       ),
     );
   }
