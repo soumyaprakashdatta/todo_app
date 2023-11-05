@@ -12,17 +12,19 @@ class DividerWithTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: <Widget>[
       Expanded(
-          child: Divider(
-        color: Colors.blueGrey.shade300,
-      )),
+        child: Divider(
+          color: Colors.blueGrey.shade300,
+        ),
+      ),
       Text(text,
           style: const TextStyle(
             color: Colors.white,
           )),
       Expanded(
-          child: Divider(
-        color: Colors.blueGrey.shade300,
-      )),
+        child: Divider(
+          color: Colors.blueGrey.shade300,
+        ),
+      ),
     ]);
   }
 }

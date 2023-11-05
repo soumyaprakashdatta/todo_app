@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_entry.dart';
 import 'package:todo_app/util.dart';
 import 'package:todo_app/widgets/confirmation_dialog_widget.dart';
+import 'package:todo_app/widgets/edit_todo_page.dart';
 import 'package:todo_app/widgets/todo_details_widget.dart';
 
 class TaskListEntryWidget extends StatefulWidget {
   const TaskListEntryWidget(
       {super.key,
       required this.data,
+      required this.triggerTodoRefresh,
       required this.toggleTodoEntryDone,
       required this.deleteEntry});
 
   final List<TodoEntry> data;
+  final Function(bool) triggerTodoRefresh;
   final Future<void> Function(TodoEntry) toggleTodoEntryDone;
   final Future<void> Function(TodoEntry) deleteEntry;
 
@@ -54,6 +57,9 @@ class TaskListEntryViewState extends State<TaskListEntryWidget> {
           return Card(
             shape: border,
             child: ListTile(
+              dense: true,
+              minLeadingWidth: 5,
+              horizontalTitleGap: 5,
               shape: border,
               leading: Checkbox(
                 value: widget.data[index].done,
@@ -97,6 +103,16 @@ class TaskListEntryViewState extends State<TaskListEntryWidget> {
                             TodoDetailsWidget(todo: widget.data[index])));
                       },
                     ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(createRoute(EditTodoWidget(
+                        todo: widget.data[index],
+                        triggerTodoRefresh: widget.triggerTodoRefresh,
+                      )));
+                    },
+                    icon: const Icon(Icons.edit),
+                    color: Colors.blueGrey.shade200,
                   ),
                   IconButton(
                     onPressed: () {

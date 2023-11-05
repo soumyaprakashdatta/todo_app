@@ -96,7 +96,7 @@ class TodoListViewState extends State<TodoListView> {
   Future<void> toggleTodoEntryDone(TodoEntry entry) async {
     _setAppbarLoading(true);
     _setListLoading(false);
-    updateTodoEntry(entry.objectId, "done", !entry.done).then(
+    updateTodoEntryField(entry.objectId, "done", !entry.done).then(
       (value) {
         fetchTodos();
       },
@@ -178,6 +178,7 @@ class TodoListViewState extends State<TodoListView> {
                             data: snapshot.data!
                                 .where((e) => e.done == false)
                                 .toList(),
+                            triggerTodoRefresh: triggerTodoRefresh,
                             toggleTodoEntryDone: toggleTodoEntryDone,
                             deleteEntry: deleteEntry,
                           ),
@@ -186,6 +187,7 @@ class TodoListViewState extends State<TodoListView> {
                             data: snapshot.data!
                                 .where((e) => e.done == true)
                                 .toList(),
+                            triggerTodoRefresh: triggerTodoRefresh,
                             toggleTodoEntryDone: toggleTodoEntryDone,
                             deleteEntry: deleteEntry,
                           ),

@@ -6,7 +6,8 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'models/todo_entry.dart';
 
 Future<List<TodoEntry>> fetchTodoEntries() async {
-  final QueryBuilder<ParseObject> parseQuery = QueryBuilder<ParseObject>(ParseObject('todo'));
+  final QueryBuilder<ParseObject> parseQuery =
+      QueryBuilder<ParseObject>(ParseObject('todo'));
   parseQuery.orderByDescending('createdAt');
 
   final ParseResponse apiResponse = await parseQuery.query();
@@ -15,7 +16,8 @@ Future<List<TodoEntry>> fetchTodoEntries() async {
       developer.log((o as ParseObject).toString());
     }
 
-    final maps = jsonDecode(apiResponse.results.toString()).cast<Map<String, dynamic>>();
+    final maps =
+        jsonDecode(apiResponse.results.toString()).cast<Map<String, dynamic>>();
 
     List<TodoEntry> entries = List.generate(maps.length, (i) {
       return TodoEntry.fromMap(maps[i]);
@@ -42,9 +44,21 @@ Future<bool> createTodoEntry(String title, String description) async {
   throw Exception("error while creating todo entry");
 }
 
-Future<bool> updateTodoEntry(String id, String key, Object val) async {
+Future<bool> updateTodoEntryField(String id, String key, Object val) async {
   var todoEntry = ParseObject("todo")..objectId = id;
   todoEntry.set(key, val);
+  final ParseResponse response = await todoEntry.save();
+  if (response.success && response.results != null) {
+    return true;
+  }
+  throw Exception("error while updating todo entry for id=$id");
+}
+
+Future<bool> updateTodoTitleDescription(
+    String id, String title, Object description) async {
+  var todoEntry = ParseObject("todo")..objectId = id;
+  todoEntry.set("title", title);
+  todoEntry.set("description", description);
   final ParseResponse response = await todoEntry.save();
   if (response.success && response.results != null) {
     return true;

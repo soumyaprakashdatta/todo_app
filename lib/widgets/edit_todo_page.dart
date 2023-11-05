@@ -2,20 +2,31 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:todo_app/api.dart';
+import 'package:todo_app/models/todo_entry.dart';
 
-class AddTodoWidget extends StatefulWidget {
-  const AddTodoWidget({super.key, required this.triggerTodoRefresh});
+class EditTodoWidget extends StatefulWidget {
+  const EditTodoWidget(
+      {super.key, required this.todo, required this.triggerTodoRefresh});
 
+  final TodoEntry todo;
   final Function(bool) triggerTodoRefresh;
 
   @override
-  AddTodoStateWidget createState() => AddTodoStateWidget();
+  EditTodoStateWidget createState() => EditTodoStateWidget();
 }
 
-class AddTodoStateWidget extends State<AddTodoWidget> {
-  final todoTitleController = TextEditingController();
-  final todoDescriptionController = TextEditingController();
+class EditTodoStateWidget extends State<EditTodoWidget> {
+  late final TextEditingController todoTitleController;
+  late final TextEditingController todoDescriptionController;
   bool appBarLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    todoTitleController = TextEditingController(text: widget.todo.title);
+    todoDescriptionController =
+        TextEditingController(text: widget.todo.description);
+  }
 
   void _setAppbarLoading(bool val) {
     setState(() {
@@ -24,7 +35,7 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
     });
   }
 
-  Future<void> createEntry(BuildContext providedContext) async {
+  Future<void> editEntry(BuildContext providedContext) async {
     if (todoTitleController.text.trim().isEmpty ||
         todoDescriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -35,7 +46,8 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
     }
 
     _setAppbarLoading(true);
-    createTodoEntry(
+    updateTodoTitleDescription(
+      widget.todo.objectId,
       todoTitleController.text,
       todoDescriptionController.text,
     ).then(
@@ -48,15 +60,15 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Color.fromARGB(199, 13, 122, 1),
-            content: Text("successfully created todo"),
+            content: Text("successfully updated todo"),
             duration: Duration(seconds: 2)));
       },
       onError: (err) {
         if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-              content:
-                  Text("error while adding todo entry, err=${err.toString()}"),
+              content: Text(
+                  "error while updating todo entry, err=${err.toString()}"),
               duration: const Duration(seconds: 2)));
         }
       },
@@ -70,7 +82,7 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add todo"),
+        title: const Text("Edit todo"),
         backgroundColor: Colors.blueGrey.shade900,
         bottom: appBarLoading
             ? PreferredSize(
@@ -133,9 +145,9 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
                           (states) => Colors.blue.shade700),
                     ),
                     onPressed: () {
-                      createEntry(context);
+                      editEntry(context);
                     },
-                    child: const Text('ADD'))
+                    child: const Text('Save'))
               ],
             ),
           ),
