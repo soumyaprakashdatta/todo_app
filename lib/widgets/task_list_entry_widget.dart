@@ -3,11 +3,15 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_entry.dart';
 import 'package:todo_app/util.dart';
+import 'package:todo_app/widgets/confirmation_dialog_widget.dart';
 import 'package:todo_app/widgets/todo_details_widget.dart';
 
 class TaskListEntryWidget extends StatefulWidget {
   const TaskListEntryWidget(
-      {super.key, required this.data, required this.toggleTodoEntryDone, required this.deleteEntry});
+      {super.key,
+      required this.data,
+      required this.toggleTodoEntryDone,
+      required this.deleteEntry});
 
   final List<TodoEntry> data;
   final Future<void> Function(TodoEntry) toggleTodoEntryDone;
@@ -56,7 +60,8 @@ class TaskListEntryViewState extends State<TaskListEntryWidget> {
                 shape: const CircleBorder(),
                 onChanged: (v) => setState(
                   () {
-                    developer.log("pressed toggle for $title, prev_state=${widget.data[index].done}");
+                    developer.log(
+                        "pressed toggle for $title, prev_state=${widget.data[index].done}");
                     widget.toggleTodoEntryDone(widget.data[index]);
                   },
                 ),
@@ -75,21 +80,41 @@ class TaskListEntryViewState extends State<TaskListEntryWidget> {
                     child: ListTile(
                       title: Text(
                         "$title - $sinceStr",
-                        style: TextStyle(color: Colors.white, decoration: getTextDecoration(widget.data[index].done)),
+                        style: TextStyle(
+                            color: Colors.white,
+                            decoration:
+                                getTextDecoration(widget.data[index].done)),
                       ),
                       subtitle: Text(
                         description,
-                        style: TextStyle(color: Colors.white, decoration: getTextDecoration(widget.data[index].done)),
+                        style: TextStyle(
+                            color: Colors.white,
+                            decoration:
+                                getTextDecoration(widget.data[index].done)),
                       ),
                       onTap: () {
-                        Navigator.of(context).push(createRoute(TodoDetailsWidget(todo: widget.data[index])));
+                        Navigator.of(context).push(createRoute(
+                            TodoDetailsWidget(todo: widget.data[index])));
                       },
                     ),
                   ),
                   IconButton(
                     onPressed: () {
-                      developer.log("pressed delete for $title");
-                      widget.deleteEntry(widget.data[index]);
+                      createConfirmationDialog(
+                        context,
+                        "Delete Todo",
+                        "Do you want to delete todo with title - $title ?",
+                        "Delete",
+                        "Cancel",
+                        () {
+                          developer.log("pressed delete for $title");
+                          widget.deleteEntry(widget.data[index]);
+                          Navigator.pop(context);
+                        },
+                        () {
+                          Navigator.pop(context);
+                        },
+                      );
                     },
                     icon: Icon(
                       Icons.delete,
