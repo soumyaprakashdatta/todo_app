@@ -26,7 +26,8 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
   }
 
   Future<void> createEntry(BuildContext providedContext) async {
-    if (todoTitleController.text.trim().isEmpty || todoDescriptionController.text.trim().isEmpty) {
+    if (todoTitleController.text.trim().isEmpty ||
+        todoDescriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color.fromARGB(200, 150, 1, 1),
           content: Text("empty title or description"),
@@ -55,7 +56,8 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
         if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: const Color.fromARGB(200, 150, 1, 1),
-              content: Text("error while adding todo entry, err=${err.toString()}"),
+              content:
+                  Text("error while adding todo entry, err=${err.toString()}"),
               duration: const Duration(seconds: 2)));
         }
       },
@@ -91,21 +93,27 @@ class AddTodoStateWidget extends State<AddTodoWidget> {
                   autocorrect: true,
                   textCapitalization: TextCapitalization.sentences,
                   controller: todoTitleController,
+                  style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
-                      labelText: "Enter todo title",
-                      labelStyle: TextStyle(
-                        color: Colors.blueGrey.shade100,
-                      )),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+                    labelText: "Enter todo title",
+                    labelStyle: TextStyle(
+                      color: Colors.blueGrey.shade100,
+                    ),
+                  ),
                 ),
                 TextFormField(
                   autocorrect: true,
                   textCapitalization: TextCapitalization.sentences,
                   controller: todoDescriptionController,
+                  style: const TextStyle(fontSize: 18, color: Colors.white),
                   decoration: InputDecoration(
-                      labelText: "Enter todo description",
-                      labelStyle: TextStyle(
-                        color: Colors.blueGrey.shade100,
-                      )),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+                    labelText: "Enter todo description",
+                    labelStyle: TextStyle(
+                      color: Colors.blueGrey.shade100,
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                     onPressed: () {
