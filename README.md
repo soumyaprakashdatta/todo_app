@@ -12,6 +12,7 @@ This codebase is for a TODO app, supported by Back4App backend. To set this up p
 - App state is always in sync with Back4App database
 
 # Set up Back4App 
+
 1. Create account
 2. Create a class named **todo**
 3. Create following columns
@@ -37,6 +38,7 @@ This codebase is for a TODO app, supported by Back4App backend. To set this up p
 ```
 
 # Run project
+
 1. If you have `make` installed, then you can run following <br/>
 ```make run``` 
 1. Otherwise, you can run the app using <br/>
