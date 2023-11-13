@@ -1,16 +1,34 @@
-# todo_app
+# ToDo App
 
-A new Flutter project.
+This codebase is for a TODO app, supported by Back4App backend. To set this up please follow steps below
 
-## Getting Started
+# Set up Back4App 
+1. Create account
+2. Create a class named "todo"
+3. Create following columns
+   - **title** (string)
+   - **description** (string)
+   - **done** (boolean)
+4. Go to "App Settings" > "Security & Keys" section to find following properties that we will need later to connect to the table from this app
+   - Application ID
+   - Client Key
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+# Connect to Back4App class from flutter app
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Create a file named "api_keys.json" at the root label of project
+2. File structure should look as follows -
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```json
+{
+    "KeyApplicationId": "Application ID from Back4app",
+    "KeyClientKey": "Client Key from Back4app",
+    "KeyParseServerUrl": "https://parseapi.back4app.com"
+}
+```
+
+# Run project
+1. If you have `make` installed, then you can run following <br/>
+`make run` 
+1. Otherwise, you can run the app using <br/>
+```flutter run --dart-define-from-file=api_keys.json```
