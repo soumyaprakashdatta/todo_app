@@ -2,6 +2,15 @@
 
 This codebase is for a TODO app, supported by Back4App backend. To set this up please follow steps below
 
+# Key features
+
+- Crate Todo
+- Update Todo
+- View Todo details
+- Delete Todo
+- Mark Todo as complete/ pending
+- App state is always in sync with Back4App database
+
 # Set up Back4App 
 1. Create account
 2. Create a class named "todo"
