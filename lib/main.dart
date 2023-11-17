@@ -24,9 +24,14 @@ class Todo extends StatelessWidget {
 }
 
 Future<Parse> initParseSDK() async {
-  const keyApplicationId = String.fromEnvironment('KeyApplicationId');
-  const keyClientKey = String.fromEnvironment('KeyClientKey');
-  const keyParseServerUrl = String.fromEnvironment('KeyParseServerUrl');
+  const keyApplicationId = String.fromEnvironment('APPLICATION_ID');
+  const keyClientKey = String.fromEnvironment('CLIENT_KEY');
+  const keyParseServerUrl = "https://parseapi.back4app.com";
+
+  if (keyApplicationId.isEmpty || keyClientKey.isEmpty) {
+    throw Exception(
+        "APPLICATION_ID and CLIENT_KEY environment variable must not be empty");
+  }
 
   return await Parse().initialize(
     keyApplicationId,

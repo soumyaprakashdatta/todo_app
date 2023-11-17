@@ -31,9 +31,8 @@ This codebase is for a TODO app, supported by Back4App backend. To set this up p
 
 ```json
 {
-    "KeyApplicationId": "Application ID from Back4app",
-    "KeyClientKey": "Client Key from Back4app",
-    "KeyParseServerUrl": "https://parseapi.back4app.com"
+    "APPLICATION_ID": "Application ID from Back4app",
+    "CLIENT_KEY": "Client Key from Back4app"
 }
 ```
 
