@@ -22,6 +22,7 @@ This codebase is for a TODO app, supported by Back4App backend. To set this up p
 4. Go to "App Settings" > "Security & Keys" section to find following properties that we will need later to connect to the table from this app
    - **Application ID**
    - **Client Key**
+5. Edit class level permissions to allow public and authenticated read and write for ease of testing.
 
 
 # Connect to Back4App class from flutter app
