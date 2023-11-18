@@ -43,3 +43,7 @@ This codebase is for a TODO app, supported by Back4App backend. To set this up p
 ```make run``` 
 1. Otherwise, you can run the app using <br/>
 ```flutter run --dart-define-from-file=api_keys.json```
+
+# Assignment and screen-captures
+
+Assignment ppt and screen capture for different flows can be found in the assignment folder.
